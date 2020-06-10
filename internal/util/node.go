@@ -15,10 +15,11 @@
 package util
 
 import (
-	corev1 "k8s.io/api/core/v1"
 	"strconv"
 	"strings"
 	"time"
+
+	corev1 "k8s.io/api/core/v1"
 )
 
 type Node struct {
@@ -54,7 +55,8 @@ func NewNode(node corev1.Node, l string) Node {
 	} else {
 		r.Taint = "<none>"
 	}
-	r.Age = strconv.FormatFloat(time.Now().Sub(node.CreationTimestamp.Time).Hours(), 'f', 1, 64)+"h"
+	r.Age = strconv.FormatFloat(time.Since(node.CreationTimestamp.Time).Hours(), 'f', 1, 64) + "h"
+
 	flagLabelSlice := strings.Split(l, ",")
 	for i := 0; i < len(flagLabelSlice); i++ {
 		if flagLabelSlice[i] == "" {
