@@ -33,7 +33,7 @@ func NewTopologyOptions(region, zone, namespace, label string) (*TopologyOptions
 		Namespace: namespace,
 		Region:    region,
 		Zone:      zone,
-		Label: label,
+		Label:     label,
 	}, nil
 }
 
