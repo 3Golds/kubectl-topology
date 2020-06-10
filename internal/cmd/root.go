@@ -30,6 +30,7 @@ func init() {
 	configFlags.AddFlags(rootCmd.PersistentFlags())
 	rootCmd.PersistentFlags().StringP("region", "r", "", "The region to filter resources by. Mutually exclusive with '--zone'.")
 	rootCmd.PersistentFlags().StringP("zone", "z", "", "The zone to filter resources by. Mutually exclusive with '--region'.")
+	rootCmd.PersistentFlags().StringP("label", "L", "", "Specify the labels to list")
 	rootCmd.SetVersionTemplate("kubectl-topology " + version.Version)
 }
 

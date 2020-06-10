@@ -35,7 +35,7 @@ func ListNodes(kubeClient kubernetes.Interface, o *TopologyOptions) (NodeList, e
 		}
 		r := make(NodeList, 0, len(n.Items))
 		for _, nn := range n.Items {
-			r = append(r, NewNode(nn))
+			r = append(r, NewNode(nn, o.Label))
 		}
 		return r, nil
 	}

@@ -41,7 +41,8 @@ var podCmd = &cobra.Command{
 		}
 		r, _ := cmd.Flags().GetString("region")
 		z, _ := cmd.Flags().GetString("zone")
-		o, err := util.NewTopologyOptions(r, z, n)
+		l, _ := cmd.Flags().GetString("label")
+		o, err := util.NewTopologyOptions(r, z, n, l)
 		if err != nil {
 			return err
 		}

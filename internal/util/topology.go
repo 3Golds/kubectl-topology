@@ -22,9 +22,10 @@ type TopologyOptions struct {
 	Namespace string
 	Region    string
 	Zone      string
+	Label     string
 }
 
-func NewTopologyOptions(region, zone, namespace string) (*TopologyOptions, error) {
+func NewTopologyOptions(region, zone, namespace, label string) (*TopologyOptions, error) {
 	if len(region)*len(zone) != 0 {
 		return nil, fmt.Errorf("region and zone are mutually exclusive")
 	}
@@ -32,6 +33,7 @@ func NewTopologyOptions(region, zone, namespace string) (*TopologyOptions, error
 		Namespace: namespace,
 		Region:    region,
 		Zone:      zone,
+		Label: label,
 	}, nil
 }
 

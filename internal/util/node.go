@@ -16,18 +16,26 @@ package util
 
 import (
 	corev1 "k8s.io/api/core/v1"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type Node struct {
 	Name   string
 	Region string
 	Zone   string
+	Taint  string
+	Age    string
+	Label  string
 }
 
-func NewNode(node corev1.Node) Node {
+func NewNode(node corev1.Node, l string) Node {
 	r := Node{
 		Name: node.Name,
 	}
+	var strSlice []string
+	var labelSlice []string
 	if v, exists := node.Labels[RegionLabel]; exists && v != "" {
 		r.Region = v
 	} else {
@@ -38,19 +46,47 @@ func NewNode(node corev1.Node) Node {
 	} else {
 		r.Zone = node.Labels[Pre117ZoneLabel]
 	}
+	if node.Spec.Taints != nil {
+		for i := 0; i < len(node.Spec.Taints); i++ {
+			str := node.Spec.Taints[i].Key + "=" + node.Spec.Taints[i].Value + ":" + string(node.Spec.Taints[i].Effect)
+			strSlice = append(strSlice, str)
+		}
+	} else {
+		r.Taint = "<none>"
+	}
+
+	r.Age = strconv.FormatFloat(time.Now().Sub(node.CreationTimestamp.Time).Hours(), 'f', 1, 64)+"h"
+
+	flagLabelSlice := strings.Split(l, ",")
+	for i := 0; i < len(flagLabelSlice); i++ {
+		if flagLabelSlice[i] == "" {
+			labelSlice = append(labelSlice, "<none>")
+			continue
+		}
+		if node.Labels[flagLabelSlice[i]] == "" {
+			labelSlice = append(labelSlice, "")
+			continue
+		}
+		str := flagLabelSlice[i] + "=" + node.Labels[flagLabelSlice[i]]
+		labelSlice = append(labelSlice, str)
+	}
+	r.Label = strings.Join(labelSlice, ",")
+	//r.AppLabel = node.Labels["app"]
+	r.Taint = strings.Join(strSlice, ",")
 	return r
 }
 
 type NodeList []Node
 
 func (l NodeList) Headers() string {
-	return "NAME\tREGION\tZONE\n"
+	return "NAME\tREGION\tZONE\tTAINTS\tAge\t\tLABEL\n"
 }
 
 func (l NodeList) Items() []string {
 	r := make([]string, 0, len(l))
 	for _, ll := range l {
-		r = append(r, ll.Name+"\t"+ll.Region+"\t"+ll.Zone+"\n")
+		r = append(r, ll.Name+"\t"+ll.Region+"\t"+ll.Zone+"\t"+ll.Taint+"\t"+ll.Age+"\t\t"+ll.Label+"\n")
+		//r = append(r, ll.Name+"\t"+ll.Region+"\t"+ll.Zone+"\t"+ll.Taint+"\t"+ll.Age+"\t"+ll.Label+"\n")
 	}
 	return r
 }

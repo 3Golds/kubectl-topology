@@ -31,7 +31,8 @@ var nodeCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		r, _ := cmd.Flags().GetString("region")
 		z, _ := cmd.Flags().GetString("zone")
-		o, err := util.NewTopologyOptions(r, z, "")
+		l, _ := cmd.Flags().GetString("label")
+		o, err := util.NewTopologyOptions(r, z, "", l)
 		if err != nil {
 			return err
 		}
