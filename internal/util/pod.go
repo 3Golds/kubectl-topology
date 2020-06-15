@@ -37,7 +37,7 @@ func NewPod(pod corev1.Pod, node Node) Pod {
 type PodList []Pod
 
 func (l PodList) Headers() string {
-	return "NAMESPACE\tNAME\tNODE\tREGION\tZONE\tTAINTS\t\tLABEL\n"
+	return "NAMESPACE\tNAME\tNODE\tIP\tREGION\tZONE\tTAINTS\t\tINSTANCE-TYPE\tLABEL\n"
 }
 
 func (l PodList) Items() []string {
@@ -46,7 +46,7 @@ func (l PodList) Items() []string {
 	})
 	r := make([]string, 0, len(l))
 	for _, ll := range l {
-		r = append(r, ll.Namespace+"\t"+ll.Name+"\t"+ll.Node.Name+"\t"+ll.Node.Region+"\t"+ll.Node.Zone+"\t"+ll.Node.Taint+"\t\t"+ll.Node.Label+"\n")
+		r = append(r, ll.Namespace+"\t"+ll.Name+"\t"+ll.Node.Name+"\t"+ll.Node.NodeInternalIP+"\t"+ll.Node.Region+"\t"+ll.Node.Zone+"\t"+ll.Node.Taint+"\t\t"+ll.Node.InstanceType+"\t"+ll.Node.Label+"\n")
 	}
 	return r
 }

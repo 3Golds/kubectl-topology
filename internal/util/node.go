@@ -15,6 +15,7 @@
 package util
 
 import (
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -23,12 +24,14 @@ import (
 )
 
 type Node struct {
-	Name   string
-	Region string
-	Zone   string
-	Taint  string
-	Age    string
-	Label  string
+	Name           string
+	Region         string
+	Zone           string
+	Taint          string
+	Age            string
+	Label          string
+	InstanceType   string
+	NodeInternalIP string
 }
 
 func NewNode(node corev1.Node, l string) Node {
@@ -56,7 +59,11 @@ func NewNode(node corev1.Node, l string) Node {
 		r.Taint = "<none>"
 	}
 	r.Age = strconv.FormatFloat(time.Since(node.CreationTimestamp.Time).Hours(), 'f', 1, 64) + "h"
-
+	for i := 0; i < len(node.Status.Addresses); i++ {
+		if node.Status.Addresses[i].Type == corev1.NodeInternalIP {
+			r.NodeInternalIP = node.Status.Addresses[i].Address
+		}
+	}
 	flagLabelSlice := strings.Split(l, ",")
 	for i := 0; i < len(flagLabelSlice); i++ {
 		if flagLabelSlice[i] == "" {
@@ -73,19 +80,23 @@ func NewNode(node corev1.Node, l string) Node {
 	r.Label = strings.Join(labelSlice, ",")
 	//r.AppLabel = node.Labels["app"]
 	r.Taint = strings.Join(strSlice, ",")
+	r.InstanceType = node.Labels["beta.kubernetes.io/instance-type"]
 	return r
 }
 
 type NodeList []Node
 
 func (l NodeList) Headers() string {
-	return "NAME\tREGION\tZONE\tTAINTS\tAge\t\tLABEL\n"
+	return "NAME\tIP\tREGION\tZONE\tTAINTS\tINSTANCE-TYPE\tAge\t\tLABEL\n"
 }
 
 func (l NodeList) Items() []string {
 	r := make([]string, 0, len(l))
+	sort.SliceStable(l, func(i, j int) bool {
+		return l[i].Age < l[j].Name && l[i].Region < l[j].Zone
+	})
 	for _, ll := range l {
-		r = append(r, ll.Name+"\t"+ll.Region+"\t"+ll.Zone+"\t"+ll.Taint+"\t"+ll.Age+"\t\t"+ll.Label+"\n")
+		r = append(r, ll.Name+"\t"+ll.NodeInternalIP+"\t"+ll.Region+"\t"+ll.Zone+"\t"+ll.Taint+"\t"+ll.InstanceType+"\t"+ll.Age+"\t\t"+ll.Label+"\n")
 		//r = append(r, ll.Name+"\t"+ll.Region+"\t"+ll.Zone+"\t"+ll.Taint+"\t"+ll.Age+"\t"+ll.Label+"\n")
 	}
 	return r
