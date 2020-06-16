@@ -80,7 +80,7 @@ func NewNode(node corev1.Node, l string) Node {
 	r.Label = strings.Join(labelSlice, ",")
 	//r.AppLabel = node.Labels["app"]
 	r.Taint = strings.Join(strSlice, ",")
-	r.InstanceType = node.Labels["beta.kubernetes.io/instance-type"]
+	r.InstanceType = node.Labels[InstanceType]
 	return r
 }
 

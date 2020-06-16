@@ -19,10 +19,11 @@ import (
 )
 
 type TopologyOptions struct {
-	Namespace string
-	Region    string
-	Zone      string
-	Label     string
+	Namespace     string
+	Region        string
+	Zone          string
+	Label         string
+	LabelSelector string
 }
 
 func NewTopologyOptions(region, zone, namespace, label string) (*TopologyOptions, error) {

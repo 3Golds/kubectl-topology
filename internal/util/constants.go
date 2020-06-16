@@ -24,6 +24,7 @@ const (
 	RegionLabel         = TopologyLabelPrefix + "/" + RegionSuffix
 	TopologyLabelPrefix = "topology.kubernetes.io"
 	ZoneLabel           = TopologyLabelPrefix + "/" + ZoneSuffix
+	InstanceType        = "beta.kubernetes.io/instance-type"
 )
 
 const (
