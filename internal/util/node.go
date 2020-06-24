@@ -87,7 +87,7 @@ func NewNode(node corev1.Node, l string) Node {
 type NodeList []Node
 
 func (l NodeList) Headers() string {
-	return "NAME\tIP\tREGION\tZONE\tTAINTS\tINSTANCE-TYPE\tAge\t\tLABEL\n"
+	return "NAME\tNODEIP\tREGION\tZONE\tTAINTS\tINSTANCE-TYPE\tAge\t\tLABEL\n"
 }
 
 func (l NodeList) Items() []string {

@@ -24,6 +24,7 @@ type Pod struct {
 	Name      string
 	Namespace string
 	Node      Node
+	PODIP     string
 }
 
 func NewPod(pod corev1.Pod, node Node) Pod {
@@ -31,13 +32,14 @@ func NewPod(pod corev1.Pod, node Node) Pod {
 		Name:      pod.Name,
 		Namespace: pod.Namespace,
 		Node:      node,
+		PODIP:     pod.Status.PodIP,
 	}
 }
 
 type PodList []Pod
 
 func (l PodList) Headers() string {
-	return "NAMESPACE\tNAME\tNODE\tIP\tREGION\tZONE\tTAINTS\t\tINSTANCE-TYPE\tLABEL\n"
+	return "NAMESPACE\tNAME\tPODIP\tNODEIP\tREGION\tZONE\tTAINTS\t\tINSTANCE-TYPE\tLABEL\tAGE\n"
 }
 
 func (l PodList) Items() []string {
@@ -46,9 +48,10 @@ func (l PodList) Items() []string {
 	})
 	r := make([]string, 0, len(l))
 	for _, ll := range l {
-		r = append(r, ll.Namespace+"\t"+ll.Name+"\t"+ll.Node.Name+"\t"+ll.Node.NodeInternalIP+"\t"+ll.Node.Region+"\t"+ll.Node.Zone+"\t"+ll.Node.Taint+"\t\t"+ll.Node.InstanceType+"\t"+ll.Node.Label+"\n")
+		r = append(r, ll.Namespace+"\t"+ll.Name+"\t"+ll.PODIP+"\t"+ll.Node.NodeInternalIP+"\t"+ll.Node.Region+"\t"+ll.Node.Zone+"\t"+ll.Node.Taint+"\t\t"+ll.Node.InstanceType+"\t"+ll.Node.Label+"\t"+ll.Node.Age+"\n")
 	}
 	return r
+
 }
 
 func (l PodList) Length() int {
